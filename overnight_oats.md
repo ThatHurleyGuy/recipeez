@@ -4,7 +4,7 @@
 * 4 heaping cups of oats
 * 2 cups milk
 * 2 cups water
-* 1 cup protein powder
+* 2 cup protein powder
 * 1/2 cup maple syrup
 * 1/2 cup peanut butter
 * 1 teaspoon salt
