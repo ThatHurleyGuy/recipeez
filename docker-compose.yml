@@ -1,0 +1,29 @@
+services:
+  recipeez:
+    build: .
+    container_name: recipeez-app
+    ports:
+      - "4040:4040"
+    environment:
+      - NODE_ENV=production
+      - DATABASE_PATH=/app/data/recipeez.db
+      - AUTO_IMPORT_MARKDOWN=true
+      - LLM_BASE_URL=${LLM_BASE_URL:-}
+      - LLM_API_KEY=${LLM_API_KEY:-}
+      - LLM_MODEL=${LLM_MODEL:-}
+      - VIKUNJA_URL=${VIKUNJA_URL:-}
+      - VIKUNJA_API_TOKEN=${VIKUNJA_API_TOKEN:-}
+      - VIKUNJA_PROJECT_ID=${VIKUNJA_PROJECT_ID:-}
+      - VIKUNJA_VIEW_ID=${VIKUNJA_VIEW_ID:-}
+    volumes:
+      - recipeez-data:/app/data
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://127.0.0.1:4040/api/health"]
+      interval: 30s
+      timeout: 5s
+      start_period: 20s
+      retries: 3
+
+volumes:
+  recipeez-data:
