@@ -2,16 +2,14 @@
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": [
     "config:recommended",
-    ":dependencyDashboard",
-    ":semanticCommits",
-    ":separateMultipleMajorReleases",
     ":timezone(America/Denver)"
   ],
+  "schedule": ["after 8pm on Monday"],
   "labels": ["dependencies"],
   "rangeStrategy": "bump",
   "lockFileMaintenance": {
     "enabled": true,
-    "schedule": ["before 5am on monday"]
+    "schedule": ["after 8pm on Monday"]
   },
   "vulnerabilityAlerts": {
     "enabled": true,
@@ -19,22 +17,24 @@
   },
   "packageRules": [
     {
+      "description": "Group npm patch and minor updates into one weekly PR",
       "matchManagers": ["npm"],
       "matchUpdateTypes": ["patch", "minor"],
-      "groupName": "npm patch and minor dependencies",
-      "automerge": true
+      "groupName": "npm patch and minor dependencies"
     },
     {
+      "description": "Group Docker image updates into one weekly PR",
       "matchManagers": ["dockerfile", "docker-compose"],
       "matchUpdateTypes": ["patch", "minor"],
-      "groupName": "container patch and minor dependencies",
-      "automerge": true
+      "groupName": "Docker images"
     },
     {
+      "description": "Group Next.js packages together",
       "matchPackageNames": ["next", "eslint-config-next"],
       "groupName": "next.js"
     },
     {
+      "description": "Group React packages together",
       "matchPackageNames": ["react", "react-dom", "@types/react", "@types/react-dom"],
       "groupName": "react"
     },

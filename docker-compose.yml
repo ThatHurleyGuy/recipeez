@@ -15,6 +15,8 @@ services:
       - VIKUNJA_API_TOKEN=${VIKUNJA_API_TOKEN:-}
       - VIKUNJA_PROJECT_ID=${VIKUNJA_PROJECT_ID:-}
       - VIKUNJA_VIEW_ID=${VIKUNJA_VIEW_ID:-}
+      - NTFY_ALERTS_URL=${NTFY_ALERTS_URL:-https://notify.hurley.io/alerts}
+      - NTFY_SERVICE_NAME=recipeez
     volumes:
       - recipeez-data:/app/data
     restart: unless-stopped
