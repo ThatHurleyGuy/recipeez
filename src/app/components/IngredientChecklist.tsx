@@ -5,7 +5,6 @@ import { useEffect, useState } from "react";
 type IngredientItem = {
   id: number;
   originalText: string;
-  parseConfidence: string;
 };
 
 export default function IngredientChecklist({ ingredients, recipeId }: { ingredients: IngredientItem[]; recipeId: number }) {
@@ -52,7 +51,6 @@ export default function IngredientChecklist({ ingredients, recipeId }: { ingredi
             onChange={(event) => toggle(ingredient.id, event.target.checked)}
           />
           <span>{ingredient.originalText}</span>
-          {ingredient.parseConfidence !== "raw" && <span className="badge">{ingredient.parseConfidence}</span>}
         </label>
       ))}
       {checked.size > 0 && (

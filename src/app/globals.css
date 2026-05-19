@@ -342,7 +342,7 @@ label {
 
 .ingredient-check {
   display: grid;
-  grid-template-columns: 22px 1fr auto;
+  grid-template-columns: 22px 1fr;
   align-items: start;
   gap: 10px;
   padding: 10px;
@@ -477,6 +477,7 @@ button.recipe-choice:hover {
   align-items: start;
   padding: 12px 0;
   border-bottom: 1px solid var(--border);
+  cursor: pointer;
 }
 
 .ingredient-row input {

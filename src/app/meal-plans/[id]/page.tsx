@@ -39,17 +39,14 @@ export default async function MealPlanPage({ params }: { params: Promise<{ id: s
         <h2>Shopping Items</h2>
         {plan.items.length === 0 && <p className="muted">Add recipes to see aggregated ingredients.</p>}
         {plan.items.map((item) => (
-          <div className="ingredient-row" key={item.key}>
+          <label className="ingredient-row" key={item.key}>
             <ShoppingItemToggle mealPlanId={plan.id} item={item} />
             <div>
-              <strong>
-                {[item.displayQuantity, item.unit, item.item].filter(Boolean).join(" ") || item.item}
-              </strong>
-              <p className="muted">{item.recipeTitles.join(", ")}</p>
-              <p className="muted">{item.originals.join(" / ")}</p>
+              <strong>{[item.displayQuantity, item.unit, item.item].filter(Boolean).join(" ") || item.item}</strong>
+              <span className="muted"> for {item.recipeTitles.join(", ")}</span>
             </div>
             {item.vikunjaTaskId ? <span className="badge">Sent #{item.vikunjaTaskId}</span> : <span className="badge">Needed</span>}
-          </div>
+          </label>
         ))}
       </section>
     </>

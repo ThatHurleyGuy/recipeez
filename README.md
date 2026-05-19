@@ -81,9 +81,6 @@ LLM_MODEL=gpt-4.1-mini
 VIKUNJA_URL=https://vikunja.example.com
 VIKUNJA_API_TOKEN=...
 VIKUNJA_PROJECT_ID=123
-
-# Required by newer Vikunja task APIs that create tasks through a project view.
-VIKUNJA_VIEW_ID=456
 ```
 
 SQLite is the source of truth once the app starts. Existing Markdown recipes are imported only when the database is empty.
