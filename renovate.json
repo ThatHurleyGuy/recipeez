@@ -29,16 +29,6 @@
       "groupName": "Docker images"
     },
     {
-      "description": "Group Next.js packages together",
-      "matchPackageNames": ["next", "eslint-config-next"],
-      "groupName": "next.js"
-    },
-    {
-      "description": "Group React packages together",
-      "matchPackageNames": ["react", "react-dom", "@types/react", "@types/react-dom"],
-      "groupName": "react"
-    },
-    {
       "matchUpdateTypes": ["major"],
       "dependencyDashboardApproval": true
     }
