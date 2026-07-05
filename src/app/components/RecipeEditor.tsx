@@ -38,7 +38,7 @@ export default function RecipeEditor({ recipe }: { recipe?: Recipe }) {
       })
     });
     if (!response.ok) {
-      setStatus(await response.text());
+      setStatus(await readErrorMessage(response));
       return;
     }
     const payload = await response.json();
@@ -122,4 +122,13 @@ export default function RecipeEditor({ recipe }: { recipe?: Recipe }) {
       </section>
     </div>
   );
+}
+
+async function readErrorMessage(response: Response) {
+  try {
+    const payload = await response.json();
+    return payload.error || "Request failed";
+  } catch {
+    return response.text();
+  }
 }

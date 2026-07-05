@@ -1,17 +1,59 @@
 import type { RecipeInput } from "./types";
 
 export async function importRecipeFromUrl(url: string): Promise<RecipeInput & { importMethod: string }> {
-  const response = await fetch(url, {
-    headers: {
-      "User-Agent": "recipeez/0.1 recipe importer"
-    }
-  });
-  if (!response.ok) throw new Error(`Could not fetch recipe page: ${response.status}`);
+  const sourceUrl = normalizeRecipeUrl(url);
+  const response = await fetchRecipePage(sourceUrl);
   const html = await response.text();
-  const structured = parseStructuredRecipe(html, url);
+  const structured = parseStructuredRecipe(html, sourceUrl);
   if (structured) return { ...structured, importMethod: "structured" };
-  const llm = await importWithLlm(html, url);
+  const llm = await importWithLlm(html, sourceUrl);
   return { ...llm, importMethod: "llm" };
+}
+
+function normalizeRecipeUrl(url: string) {
+  let parsed: URL;
+  try {
+    parsed = new URL(url);
+  } catch {
+    throw new Error("Import URL must be a valid URL");
+  }
+
+  if (parsed.protocol !== "http:" && parsed.protocol !== "https:") {
+    throw new Error("Import URL must start with http:// or https://");
+  }
+
+  return parsed.toString();
+}
+
+async function fetchRecipePage(url: string) {
+  const attempts: HeadersInit[] = [
+    {
+      "User-Agent": "recipeez/0.1 recipe importer",
+      Accept: "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8"
+    },
+    {
+      "User-Agent":
+        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36",
+      Accept: "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8",
+      "Accept-Language": "en-US,en;q=0.9",
+      "Upgrade-Insecure-Requests": "1"
+    }
+  ];
+
+  let lastResponse: Response | null = null;
+  for (const headers of attempts) {
+    const response = await fetch(url, {
+      cache: "no-store",
+      headers,
+      redirect: "follow"
+    });
+
+    if (response.ok) return response;
+    lastResponse = response;
+    if (response.status !== 403 && response.status !== 429) break;
+  }
+
+  throw new Error(`Could not fetch recipe page: ${lastResponse?.status || "unknown status"}`);
 }
 
 function parseStructuredRecipe(html: string, sourceUrl: string): RecipeInput | null {
