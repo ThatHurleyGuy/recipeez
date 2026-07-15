@@ -17,17 +17,17 @@
   },
   "overrides": {
     "next": {
-      "postcss": "8.5.16"
+      "postcss": "8.5.19"
     }
   },
   "devDependencies": {
-    "@eslint/eslintrc": "^3.3.5",
+    "@eslint/eslintrc": "^3.3.6",
     "@tailwindcss/postcss": "^4.3.2",
     "@types/better-sqlite3": "^7.6.13",
     "@types/node": "^20.19.43",
     "@types/react": "^19.2.17",
     "@types/react-dom": "^19.2.3",
-    "eslint": "^9.39.4",
+    "eslint": "^9.39.5",
     "eslint-config-next": "15.5.20",
     "tailwindcss": "^4.3.2",
     "typescript": "^5.9.3"
