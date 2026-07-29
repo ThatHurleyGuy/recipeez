@@ -11,13 +11,13 @@
   },
   "dependencies": {
     "better-sqlite3": "^12.11.1",
-    "next": "^15.5.20",
-    "react": "^19.2.7",
-    "react-dom": "^19.2.7"
+    "next": "^15.5.22",
+    "react": "^19.2.8",
+    "react-dom": "^19.2.8"
   },
   "overrides": {
     "next": {
-      "postcss": "8.5.21"
+      "postcss": "8.5.25"
     }
   },
   "devDependencies": {
@@ -28,7 +28,7 @@
     "@types/react": "^19.2.17",
     "@types/react-dom": "^19.2.3",
     "eslint": "^9.39.5",
-    "eslint-config-next": "15.5.20",
+    "eslint-config-next": "15.5.22",
     "tailwindcss": "^4.3.3",
     "typescript": "^5.9.3"
   }
