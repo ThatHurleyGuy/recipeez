@@ -3,12 +3,18 @@ import { sendErrorNotification } from "@/lib/errorNotifications";
 import { importRecipeFromUrl } from "@/lib/recipeImport";
 
 export async function POST(request: Request) {
+  let url: unknown;
   try {
-    const { url } = await request.json();
+    ({ url } = await request.json());
     if (!url) return NextResponse.json({ error: "Missing url" }, { status: 400 });
-    const recipe = await importRecipeFromUrl(url);
+    const recipe = await importRecipeFromUrl(String(url));
     return NextResponse.json(recipe);
   } catch (error) {
+    console.error("Recipe import failed", {
+      error: error instanceof Error ? error.stack || error.message : error,
+      request: { method: request.method, path: new URL(request.url).pathname },
+      importUrl: typeof url === "string" ? url : null
+    });
     await sendErrorNotification(error, {
       source: "api.import",
       request: { method: request.method, path: new URL(request.url).pathname }

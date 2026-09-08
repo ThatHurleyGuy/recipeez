@@ -57,10 +57,12 @@ async function fetchRecipePage(url: string) {
 }
 
 function parseStructuredRecipe(html: string, sourceUrl: string): RecipeInput | null {
-  const scripts = [...html.matchAll(/<script[^>]+type=["']application\/ld\+json["'][^>]*>([\s\S]*?)<\/script>/gi)];
+  const scripts = [
+    ...html.matchAll(/<script\b(?=[^>]*\btype\s*=\s*["']application\/ld\+json["'])[^>]*>([\s\S]*?)<\/script>/gi)
+  ];
   for (const script of scripts) {
     try {
-      const json = JSON.parse(stripHtmlEntities(script[1].trim()));
+      const json = parseJsonLdScript(script[1]);
       const recipe = findRecipeObject(json);
       if (!recipe) continue;
       const ingredients = arrayOfStrings(recipe.recipeIngredient);
@@ -92,7 +94,7 @@ function findRecipeObject(value: any): any | null {
   if (typeof value === "object") {
     const type = value["@type"];
     const types = Array.isArray(type) ? type : [type];
-    if (types.some((candidate) => String(candidate).toLowerCase() === "recipe")) return value;
+    if (types.some((candidate) => String(candidate).toLowerCase().split(/\W+/).includes("recipe"))) return value;
     if (value["@graph"]) return findRecipeObject(value["@graph"]);
   }
   return null;
@@ -118,8 +120,25 @@ function arrayOfStrings(value: any): string[] {
   return Array.isArray(value) ? value.map((item) => String(item).trim()).filter(Boolean) : [];
 }
 
-function stripHtmlEntities(value: string) {
-  return value.replace(/&quot;/g, '"').replace(/&amp;/g, "&").replace(/&#x27;/g, "'");
+function parseJsonLdScript(value: string) {
+  return JSON.parse(decodeJsonLdEntities(value.trim()));
+}
+
+function decodeJsonLdEntities(value: string) {
+  return value
+    .replace(/&quot;/g, '"')
+    .replace(/&#34;/g, '"')
+    .replace(/&#x22;/gi, '"')
+    .replace(/&apos;/g, "'")
+    .replace(/&#39;/g, "'")
+    .replace(/&#x27;/gi, "'")
+    .replace(/&lt;/g, "<")
+    .replace(/&#60;/g, "<")
+    .replace(/&#x3c;/gi, "<")
+    .replace(/&gt;/g, ">")
+    .replace(/&#62;/g, ">")
+    .replace(/&#x3e;/gi, ">")
+    .replace(/&amp;/g, "&");
 }
 
 async function importWithLlm(html: string, sourceUrl: string): Promise<RecipeInput> {
@@ -144,7 +163,30 @@ async function importWithLlm(html: string, sourceUrl: string): Promise<RecipeInp
     },
     body: JSON.stringify({
       model,
-      response_format: { type: "json_object" },
+      response_format: {
+        type: "json_schema",
+        json_schema: {
+          name: "recipe_import",
+          strict: true,
+          schema: {
+            type: "object",
+            additionalProperties: false,
+            properties: {
+              title: { type: "string" },
+              notes: { type: ["string", "null"] },
+              ingredients: {
+                type: "array",
+                items: { type: "string" }
+              },
+              steps: {
+                type: "array",
+                items: { type: "string" }
+              }
+            },
+            required: ["title", "notes", "ingredients", "steps"]
+          }
+        }
+      },
       messages: [
         {
           role: "system",
